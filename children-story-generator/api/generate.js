@@ -1,9 +1,8 @@
-// 修复版的API代码
-export default async function handler(request, response) {
+module.exports = async (request, response) => {
   // 设置CORS头
   response.setHeader('Access-Control-Allow-Origin', '*');
-  response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS, GET');
-  response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   // 处理预检请求
   if (request.method === 'OPTIONS') {
@@ -15,33 +14,10 @@ export default async function handler(request, response) {
   }
 
   try {
-    const body = await request.body;
-    console.log('收到请求:', body);
+    const { childName, childAge, gender, characterType, theme, setting, moral } = request.body;
 
-    const { childName, childAge, gender, characterType, theme, setting, moral } = body;
-
-    // 模拟故事生成（暂时不使用真实API）
-    const storyData = await generateMockStory({
-      childName, childAge, gender, characterType, theme, setting, moral
-    });
-
-    console.log('返回故事数据:', storyData);
-    response.status(200).json(storyData);
-    
-  } catch (error) {
-    console.error('生成故事错误:', error);
-    response.status(500).json({ 
-      error: '故事生成失败，请稍后重试',
-      details: error.message 
-    });
-  }
-}
-
-// 模拟故事生成函数
-function generateMockStory(data) {
-  const { childName, childAge, gender, characterType, theme, setting, moral } = data;
-  
-  const story = `
+    // 模拟故事生成
+    const story = `
 在遥远的${setting}里，住着一位名叫${childName}的${characterType}。${childName}是一个充满好奇心的${gender}，总是梦想着探索世界的每一个角落。
 
 一天，${childName}在森林里发现了一张神秘的地图，上面标记着一个隐藏的宝藏。这个宝藏据说能实现发现者的一个愿望！${childName}毫不犹豫地决定踏上寻找宝藏的旅程。
@@ -55,16 +31,24 @@ function generateMockStory(data) {
 ${childName}突然明白了，真正的宝藏不是物质财富，而是${theme}的过程中获得的成长和友谊。${childName}带着这个珍贵的领悟回到了家，与家人和朋友分享了这段奇妙的经历。
 
 ${moral || '这个故事告诉我们，勇敢面对挑战、帮助他人，我们会发现生活中最珍贵的宝藏。'}
-  `.trim();
+    `.trim();
 
-  const illustration_prompts = [
-    `${childName}作为${characterType}在${setting}中开始冒险`,
-    `${childName}用智慧和勇气克服旅途中的困难`,
-    `${childName}与朋友们一起庆祝成功，展现${theme}的真谛`
-  ];
+    const illustration_prompts = [
+      `${childName}作为${characterType}在${setting}中开始冒险`,
+      `${childName}用智慧和勇气克服旅途中的困难`,
+      `${childName}与朋友们一起庆祝成功，展现${theme}的真谛`
+    ];
 
-  return {
-    story,
-    illustration_prompts
-  };
-}
+    response.status(200).json({
+      story,
+      illustration_prompts
+    });
+    
+  } catch (error) {
+    console.error('生成故事错误:', error);
+    response.status(500).json({ 
+      error: '故事生成失败，请稍后重试',
+      details: error.message 
+    });
+  }
+};
