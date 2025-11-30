@@ -14,11 +14,16 @@
     {
       "src": "/api/generate",
       "dest": "/api/generate.js",
-      "methods": ["POST", "OPTIONS"]
+      "methods": ["GET", "POST", "OPTIONS"]
     },
     {
-      "src": "/(.*)",
+      "src": "/",
       "dest": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/generate.js": {
+      "maxDuration": 30
+    }
+  }
 }
